@@ -12,6 +12,10 @@ const App = () => {
     { id: 3, title: "Deploy the App", date: "2023-10-03" },
   ]);
 
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const [editTodo, setEditTodo] = useState(null);
+
   const addTodo = (title, date) => {
     const newTodo = {
       id: Date.now(),
@@ -21,19 +25,33 @@ const App = () => {
     setTodos([...todos, newTodo]);
   };
 
+  const startEdit = (todo) => {
+    setEditTodo(todo);
+  };
+
+  const updateTodo = (id, title, date) => {
+    setTodos(
+      todos.map((todo) => (todo.id === id ? { ...todo, title, date } : todo))
+    );
+    setEditTodo(null);
+  };
+
   const DeleteTodo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
-    <>
-      <Navbar />
+    <div className={isDarkMode ? "dark-mode" : "light-mode"}>
+      <Navbar
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        isDark={isDarkMode}
+      />
       <p className="fs-1 fw-bold text-center p-5">My Todo</p>
       <div className="container col-6 col-md-6">
-        <AddTodo onAdd={addTodo} />
-        <TodoItems todos={todos} onDelete={DeleteTodo} />
+        <AddTodo onAdd={addTodo} onUpdate={updateTodo} editingTodo={editTodo} />
+        <TodoItems todos={todos} onDelete={DeleteTodo} onEdit={startEdit} />
       </div>
-    </>
+    </div>
   );
 };
 

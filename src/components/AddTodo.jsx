@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const AddTodo = ({ onAdd }) => {
+const AddTodo = ({ onAdd, onUpdate, editingTodo }) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
 
-  const handleAdd = (e) => {
+  useEffect(() => {
+    if (editingTodo) {
+      setTitle(editingTodo.title);
+      setDate(editingTodo.date);
+    } else {
+      setTitle("");
+      setDate("");
+    }
+  }, [editingTodo]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !date) {
       alert("Title and date are required");
       return;
     }
 
-    onAdd(title, date);
+    if (editingTodo) {
+      onUpdate(editingTodo.id, title, date);
+    } else {
+      onAdd(title, date);
+    }
+
     setTitle("");
     setDate("");
   };
@@ -37,8 +52,8 @@ const AddTodo = ({ onAdd }) => {
           />
         </div>
         <div className="col-2 col-md-2">
-          <button className="btn btn-primary" onClick={handleAdd}>
-            Add
+          <button className="btn btn-primary" onClick={handleSubmit}>
+            {editingTodo ? "Update" : "Add"}
           </button>
         </div>
       </div>
